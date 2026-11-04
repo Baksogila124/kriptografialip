@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kriptografi Bab 2 · Enkripsi &amp; Dekripsi</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1c1b18;--mu:#6b6860;--ac:#0f6b5c;--ac2:#e3f1ee;--bd:#dedbd2;--er:#b3261e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141513;--card:#1e201d;--tx:#ecebe6;--mu:#9a978e;--ac:#4fc3ad;--ac2:#1b2e2a;--bd:#34362f;--er:#f2b8b5}}
+:root[data-theme="dark"]{--bg:#141513;--card:#1e201d;--tx:#ecebe6;--mu:#9a978e;--ac:#4fc3ad;--ac2:#1b2e2a;--bd:#34362f;--er:#f2b8b5}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:820px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.5rem;margin:0}.sub{color:var(--mu);margin:4px 0 20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
+h2{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin:0 0 10px}
+.seg{display:inline-flex;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:none;color:var(--tx);padding:8px 18px;font:inherit;cursor:pointer}
+.seg button.on{background:var(--ac);color:#fff}
+textarea,input,select{width:100%;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+textarea{min-height:84px;font-family:ui-monospace,Menlo,Consolas,monospace;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.row>*{flex:0 0 auto;width:auto}.row select{flex:1 1 200px}
+button.b{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:8px;padding:7px 12px;font:inherit;cursor:pointer}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.step{border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.step .h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.step b{font-size:.95rem}.step small{color:var(--mu);display:block}
+.fs{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.fs label{font-size:.82rem;color:var(--mu)}.fs input{width:130px;display:block}
+.out{font:1.1rem/1.5 ui-monospace,Menlo,Consolas,monospace;background:var(--ac2);border-radius:8px;padding:12px;word-break:break-all;min-height:48px}
+.err{color:var(--er);margin-top:8px}.note{color:var(--mu);font-size:.85rem;margin-top:8px}
+.tr{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:.85rem}
+td,th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--bd);vertical-align:top}
+td.m{font-family:ui-monospace,Menlo,Consolas,monospace;word-break:break-all}
+:root{--bg:#f2f3fb;--card:#fff;--tx:#161833;--mu:#6a6f94;--ac:#5b4bff;--ac2:#eeecff;--bd:#dfe1f2;--er:#c62828;--g:linear-gradient(135deg,#00c2a8,#5b4bff)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0c18;--card:#12152a;--tx:#eef0ff;--mu:#9aa0c3;--ac:#8f82ff;--ac2:#1a1e3f;--bd:#272c52;--er:#ff9a94}}
+:root[data-theme="dark"]{--bg:#0a0c18;--card:#12152a;--tx:#eef0ff;--mu:#9aa0c3;--ac:#8f82ff;--ac2:#1a1e3f;--bd:#272c52;--er:#ff9a94}
+body{background:radial-gradient(900px 500px at 88% -10%,rgba(91,75,255,.25),transparent 60%),radial-gradient(700px 420px at -10% 8%,rgba(0,194,168,.2),transparent 60%),var(--bg);background-attachment:fixed}
+main{max-width:860px;counter-reset:c;padding-top:28px}
+.hero{display:flex;gap:16px;align-items:center;margin-bottom:14px}
+.lock{font-size:2rem;width:64px;height:64px;border-radius:20px;background:var(--g);display:grid;place-items:center;box-shadow:0 12px 28px -8px rgba(91,75,255,.6);animation:fl 4s ease-in-out infinite}
+@keyframes fl{50%{transform:translateY(-4px)}}
+h1{font-size:2rem;line-height:1.15;background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{margin:4px 0 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px}
+.chips span{font-size:.78rem;padding:4px 12px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--mu)}
+.card{counter-increment:c;border-radius:20px;padding:20px;box-shadow:0 14px 34px -18px rgba(40,40,120,.35)}
+.card>h2{color:var(--tx);display:flex;align-items:center;gap:10px;font-size:.8rem}
+.card>h2:first-child::before{content:counter(c);width:26px;height:26px;border-radius:9px;background:var(--g);color:#fff;display:grid;place-items:center;font-size:.8rem;letter-spacing:0}
+.seg{padding:4px;border-radius:14px;background:var(--bg)}
+.seg button{border-radius:10px;font-weight:600;transition:.2s}
+.seg button.on{background:var(--g);box-shadow:0 6px 14px -6px rgba(91,75,255,.7)}
+textarea,input,select{border-radius:12px;transition:.2s}
+textarea:focus,input:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 3px var(--ac2)}
+textarea{min-height:100px;font-size:1rem}
+#steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.step{margin:0;border-radius:14px;background:var(--bg);transition:.2s}
+.step:hover{border-color:var(--ac)}
+.step.on{border-color:var(--ac);background:var(--ac2);box-shadow:0 0 0 1px var(--ac) inset}
+.step input[type=checkbox]{accent-color:var(--ac);width:18px;height:18px}
+.step small{margin-top:2px;font-size:.8rem}
+#go{width:100%;padding:14px;font-size:1.05rem;font-weight:700;border:0;border-radius:14px;background:var(--g);box-shadow:0 12px 26px -10px rgba(91,75,255,.8);transition:.2s;margin-top:4px}
+#go:hover{transform:translateY(-2px)}#go:active{transform:none}
+button.b{border-radius:10px;transition:.2s}button.b:hover{border-color:var(--ac)}
+.out{font-size:1.25rem;background:var(--ac2);border:1px solid var(--bd);border-left:5px solid var(--ac);border-radius:12px;padding:16px}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
+tr:hover td{background:var(--ac2)}
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#05060f;--card:rgba(12,16,38,.72);--tx:#e8f4ff;--mu:#7f8db5;--ac:#00f0ff;--ac2:rgba(0,240,255,.08);--bd:rgba(0,240,255,.25);--er:#ff5c8a;--g:linear-gradient(135deg,#00f0ff,#8a5cff 55%,#ff3df0);color-scheme:dark}
+body{background:radial-gradient(900px 500px at 90% -10%,rgba(138,92,255,.3),transparent 60%),radial-gradient(700px 420px at -10% 10%,rgba(0,240,255,.2),transparent 60%),var(--bg)}
+#mx{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.3}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:5;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px)}
+main{position:relative;z-index:1}
+h1{position:relative;font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.02em;background:none;color:#fff;-webkit-text-fill-color:#fff;text-shadow:0 0 22px rgba(0,240,255,.75)}
+h1::before,h1::after{content:attr(data-t);position:absolute;inset:0;-webkit-text-fill-color:currentColor;text-shadow:none}
+h1::before{color:#ff3df0;transform:translateX(3px);animation:g1 3.2s infinite steps(1)}
+h1::after{color:#00f0ff;transform:translateX(-3px);animation:g1 2.6s infinite steps(1) reverse}
+@keyframes g1{0%,88%,100%{clip-path:inset(0 0 100% 0)}90%{clip-path:inset(10% 0 62% 0)}94%{clip-path:inset(55% 0 15% 0)}97%{clip-path:inset(30% 0 40% 0)}}
+.lock{position:relative;box-shadow:0 0 30px rgba(0,240,255,.6),0 0 60px rgba(255,61,240,.35)}
+.lock::after{content:"";position:absolute;inset:-6px;border-radius:24px;border:2px solid var(--ac);animation:ring 2.4s ease-out infinite}
+@keyframes ring{from{opacity:.8;transform:scale(.95)}to{opacity:0;transform:scale(1.35)}}
+.chips span{background:rgba(0,0,0,.35);border-color:var(--bd);color:var(--ac);font-family:ui-monospace,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.05em;font-size:.7rem}
+.chips .stt{margin-left:auto;color:#39ff88;border-color:rgba(57,255,136,.45);box-shadow:0 0 14px rgba(57,255,136,.25)}
+.card{background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid var(--bd);box-shadow:0 0 0 1px rgba(255,255,255,.03) inset,0 20px 50px -20px rgba(0,240,255,.35);animation:up .7s both}
+.card+.card{animation-delay:.12s}.card+.card+.card{animation-delay:.24s}
+@keyframes up{from{opacity:0;transform:translateY(24px)}}
+.card>h2{font-family:ui-monospace,Menlo,Consolas,monospace;color:var(--ac)}
+.card>h2:first-child::before{color:#02030a;font-weight:800;box-shadow:0 0 14px rgba(0,240,255,.7)}
+.seg{background:rgba(0,0,0,.4);border-color:var(--bd)}
+.seg button.on{color:#02030a;font-weight:800;box-shadow:0 0 18px rgba(0,240,255,.7)}
+textarea,input{background:rgba(0,0,0,.4);border-color:var(--bd);caret-color:var(--ac);font-family:ui-monospace,Menlo,Consolas,monospace}
+textarea:focus,input:focus{box-shadow:0 0 0 3px rgba(0,240,255,.18),0 0 22px rgba(0,240,255,.35)}
+.step{background:rgba(0,0,0,.3);border-color:var(--bd)}
+.step:hover{transform:translateY(-2px);box-shadow:0 8px 24px -10px rgba(0,240,255,.5)}
+.step.on{background:var(--ac2);box-shadow:0 0 0 1px var(--ac) inset,0 0 26px rgba(0,240,255,.3)}
+#go{color:#02030a;background:linear-gradient(120deg,#00f0ff,#8a5cff,#ff3df0,#00f0ff);background-size:300% 100%;animation:sh 5s linear infinite,pl 2s ease-in-out infinite;text-transform:uppercase;letter-spacing:.15em}
+@keyframes sh{to{background-position:300% 0}}
+@keyframes pl{50%{box-shadow:0 0 38px rgba(0,240,255,.8),0 0 70px rgba(255,61,240,.45)}}
+#go:hover{transform:scale(1.015)}
+button.b{background:rgba(0,0,0,.35);border-color:var(--bd)}button.b:hover{box-shadow:0 0 16px rgba(0,240,255,.4)}
+button.p{color:#02030a}
+.out{background:rgba(0,0,0,.55);color:#39ff88;text-shadow:0 0 10px rgba(57,255,136,.6);border:1px solid rgba(57,255,136,.35);border-left:5px solid #39ff88;box-shadow:0 0 28px -8px rgba(57,255,136,.4)}
+.out::after{content:"▌";color:#39ff88;animation:bk 1s steps(1) infinite}
+@keyframes bk{50%{opacity:0}}
+td.m{color:var(--ac)}tr:hover td{background:rgba(0,240,255,.07)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="mx"></canvas>
+<main>
+<header class="hero"><div class="lock">🔐</div><div><h1 data-t="Enkripsi &amp; Dekripsi">Enkripsi &amp; Dekripsi</h1><p class="sub">Berdasarkan materi Bab 2 · Kriptografi, Keamanan Sistem</p></div></header>
+<div class="chips"><span>Substitusi</span><span>Blocking</span><span>Permutasi</span><span>Ekspansi</span><span>Pemampatan</span><span class="stt" id="stt">● SIAP</span></div>
+
+<div class="card">
+<h2>Mode</h2>
+<div class="seg"><button id="me" class="on">Enkripsi</button><button id="md">Dekripsi</button></div>
+<h2 style="margin-top:16px" id="lin">Plaintext</h2>
+<textarea id="in" spellcheck="false">SISTEM</textarea>
+</div>
+
+<div class="card">
+<h2>Pilih teknik</h2>
+<div id="steps"></div>
+<div class="row"><button class="b p" id="go">Proses</button></div>
+</div>
+
+<div class="card">
+<h2 id="lout">Ciphertext</h2>
+<div class="out" id="out"></div>
+<div id="err" class="err"></div>
+<div id="fr" class="note"></div>
+<div class="row"><button class="b p" id="cp">Salin</button><button class="b" id="sw">Pakai hasil sebagai input lawan mode</button></div>
+<div class="tr" style="margin-top:14px"><table><thead><tr><th>Langkah</th><th>Hasil</th></tr></thead><tbody id="tr"></tbody></table></div>
+<p class="note">Tanda _ mewakili spasi atau karakter pengisi. Huruf diubah ke kapital. Jangan memakai tanda &amp; pada plaintext bila memakai pemampatan.</p>
+</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const PL="ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.,";
+const CI="BF1KQGATPJ6HYD2X5MV7C84I9N"+"REU3LSW,.OZ0";
+const U=s=>s.toUpperCase(), US=s=>U(s).replace(/ /g,"_");
+const mp=(s,a,b)=>[...s].map(c=>{const i=a.indexOf(c);return i<0?c:b[i]}).join("");
+const cs=(s,k)=>{k=((k%26)+26)%26;return U(s).replace(/[A-Z]/g,c=>String.fromCharCode((c.charCodeAt(0)-65+k)%26+65))};
+const rule=p=>{const r=p.rule.trim().split(/[\s,]+/).map(Number);const n=r.length;
+ if(!n||[...r].sort((a,b)=>a-b).some((v,i)=>v!==i+1))throw Error("Aturan permutasi harus memuat angka 1 sampai n tanpa pengulangan, mis. 3 1 4 2.");return r};
+const cols=p=>Math.max(1,parseInt(p.cols)||1), iv=p=>Math.max(2,parseInt(p.n)||3);
+
+const D={
+sub:{n:"Substitusi · tabel acak",r:"Tiap karakter diganti memakai tabel substitusi dari materi (A–Z, 0–9, titik, koma). Kuncinya adalah tabel itu sendiri.",f:[],
+ e:s=>mp(U(s),PL,CI),d:s=>mp(s,CI,PL)},
+caesar:{n:"Substitusi · Caesar Cipher",r:"C = (M + k) mod 26. Di materi k = 3, contoh SISTEM → VLVWHP.",f:[["k","Geser (k)","number",3]],
+ e:(s,p)=>cs(s,+p.k||0),d:(s,p)=>cs(s,-(+p.k||0))},
+rot13:{n:"Substitusi · ROT13",r:"Setiap huruf diganti huruf 13 posisi darinya. Enkripsi dua kali mengembalikan pesan semula.",f:[],
+ e:s=>cs(s,13),d:s=>cs(s,13)},
+block:{n:"Blocking",r:"Plaintext ditulis vertikal ke bawah per lajur, ciphertext dibaca horizontal per baris. Jumlah baris dan kolom menjadi kunci.",f:[["cols","Jumlah kolom","number",5]],
+ e:(s,p)=>{s=US(s);const c=cols(p),r=Math.ceil(s.length/c);s=s.padEnd(r*c,"_");let o="";
+  for(let i=0;i<r;i++)for(let j=0;j<c;j++)o+=s[j*r+i];return o},
+ d:(s,p)=>{const c=cols(p);if(s.length%c)throw Error("Panjang ciphertext ("+s.length+") harus kelipatan jumlah kolom ("+c+").");
+  const r=s.length/c,o=[];for(let i=0;i<r;i++)for(let j=0;j<c;j++)o[j*r+i]=s[i*c+j];return o.join("")}},
+perm:{n:"Permutasi (transposisi)",r:"Pesan dibagi blok, posisi karakter diacak. Contoh aturan 3 1 4 2: hasil ke-1 diambil dari karakter ke-3, dan seterusnya.",f:[["rule","Aturan blok","text","3 1 4 2"]],
+ e:(s,p)=>{const r=rule(p),n=r.length;s=US(s);s=s.padEnd(Math.ceil(s.length/n)*n,"_");let o="";
+  for(let i=0;i<s.length;i+=n)o+=r.map(k=>s[i+k-1]).join("");return o},
+ d:(s,p)=>{const r=rule(p),n=r.length;if(s.length%n)throw Error("Panjang ciphertext ("+s.length+") harus kelipatan ukuran blok ("+n+").");let o="";
+  for(let i=0;i<s.length;i+=n){const b=[];r.forEach((k,j)=>b[k-1]=s[i+j]);o+=b.join("")}return o}},
+exp:{n:"Ekspansi",r:"Kata diawali konsonan atau angka ganjil: pindahkan huruf awal ke akhir lalu tambah AN. Diawali vokal atau angka genap: tambah I di akhir.",f:[],
+ e:s=>U(s).split(" ").map(w=>{if(!w)return w;const f=w[0];
+  return(/[B-DF-HJ-NP-TV-Z]/.test(f)||"13579".includes(f))?w.slice(1)+f+"AN":w+"I"}).join(" "),
+ d:s=>U(s).split(" ").map(w=>{if(w.length>2&&w.endsWith("AN")){const x=w.slice(0,-2);return x.slice(-1)+x.slice(0,-1)}
+  return w.endsWith("I")?w.slice(0,-1):w}).join(" ")},
+comp:{n:"Pemampatan",r:"Hilangkan setiap karakter ke-n (di materi n = 3), lalu satukan karakter yang dihilangkan sebagai lampiran setelah tanda &.",f:[["n","Karakter ke-","number",3]],
+ e:(s,p)=>{s=US(s);const n=iv(p);let k="",m="";[...s].forEach((c,i)=>(i+1)%n?k+=c:m+=c);return k+"&"+m},
+ d:(s,p)=>{const n=iv(p),i=s.indexOf("&");if(i<0)throw Error("Tanda & tidak ditemukan pada ciphertext.");
+  const k=s.slice(0,i),m=s.slice(i+1),t=k.length+m.length;let a=0,b=0,o="";
+  for(let x=1;x<=t;x++)o+=x%n?(k[a++]??""):(m[b++]??"");return o}}
+};
+
+let mode="enc",done=false;const sel={caesar:true},P={};
+Object.entries(D).forEach(([t,d])=>{P[t]={};d.f.forEach(([k,,,v])=>P[t][k]=v)});
+const getSteps=()=>Object.keys(D).filter(t=>sel[t]).map(t=>({t,p:P[t]}));
+
+
+function drawSteps(){
+ const box=$("steps");box.innerHTML="";
+ Object.entries(D).forEach(([t,d])=>{const el=document.createElement("div");el.className="step"+(sel[t]?" on":"");
+  const lb=document.createElement("label");lb.style.cssText="display:flex;gap:10px;align-items:flex-start;cursor:pointer";
+  const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!sel[t];cb.style.cssText="width:auto;margin-top:5px";
+  const tx=document.createElement("span");tx.innerHTML=`<b>${d.n}</b><small>${d.r}</small>`;
+  lb.append(cb,tx);el.appendChild(lb);
+  const fs=document.createElement("div");fs.className="fs";fs.style.display=sel[t]&&d.f.length?"flex":"none";
+  d.f.forEach(([k,l,ty])=>{const l2=document.createElement("label");l2.textContent=l;const inp=document.createElement("input");
+   inp.type=ty;inp.value=P[t][k];inp.oninput=()=>{P[t][k]=inp.value};l2.appendChild(inp);fs.appendChild(l2)});
+  cb.onchange=()=>{sel[t]=cb.checked;el.classList.toggle("on",cb.checked);fs.style.display=cb.checked&&d.f.length?"flex":"none"};
+  el.appendChild(fs);box.appendChild(el)});
+}
+
+
+function run(){
+ const enc=mode==="enc";let cur=enc?$("in").value.replace(/\s+/g," ").trim():$("in").value.trim(),err="";
+ const rows=[["Input",cur]],st=getSteps(),list=enc?st:[...st].reverse();
+ try{if(!st.length)throw Error("Pilih minimal satu teknik.");for(const s of list){const d=D[s.t];cur=enc?d.e(cur,s.p):d.d(cur,s.p);rows.push([(enc?"":"Balik · ")+d.n,cur])}}catch(e){err=e.message}
+ err?($("out").textContent=""):scr($("out"),cur);$("err").textContent=err;$("stt").textContent=err?"● ERROR":enc?"● TERENKRIPSI":"● TERDEKRIPSI";
+ $("fr").textContent=(!err&&!enc&&cur.includes("_"))?"Dengan spasi dipulihkan: "+cur.replace(/_/g," ").trim():"";
+ $("tr").innerHTML="";rows.forEach(([a,b])=>{const tr=document.createElement("tr");
+  tr.innerHTML="<td></td><td class='m'></td>";tr.children[0].textContent=a;tr.children[1].textContent=b;$("tr").appendChild(tr)});
+}
+function setMode(m){mode=m;$("me").classList.toggle("on",m==="enc");$("md").classList.toggle("on",m==="dec");
+ $("lin").textContent=m==="enc"?"Plaintext":"Ciphertext";$("lout").textContent=m==="enc"?"Ciphertext":"Plaintext";if(done)run()}
+$("me").onclick=()=>setMode("enc");$("md").onclick=()=>setMode("dec");
+$("sw").onclick=()=>{const o=$("out").textContent;if(!o)return;$("in").value=o;setMode(mode==="enc"?"dec":"enc")};
+$("cp").onclick=()=>{const o=$("out").textContent;try{navigator.clipboard.writeText(o);$("cp").textContent="Tersalin ✓"}catch(e){$("cp").textContent="Gagal menyalin"}
+ setTimeout(()=>$("cp").textContent="Salin",1500)};
+let tm;function scr(el,t){clearInterval(tm);const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+<>",st=Math.max(1,Math.ceil(t.length/22));let n=0;
+ tm=setInterval(()=>{n+=st;el.textContent=t.slice(0,n)+[...t.slice(n)].map(c=>c===" "?c:A[Math.random()*A.length|0]).join("");if(n>=t.length){el.textContent=t;clearInterval(tm)}},35)}
+(()=>{if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;const c=$("mx"),x=c.getContext("2d"),ch="01ABCDEFGHIJKLMNOPQRSTUVWXYZ#$%&*+";let w,h,n,d;
+ const rs=()=>{w=c.width=innerWidth;h=c.height=innerHeight;n=Math.ceil(w/16);d=Array.from({length:n},()=>Math.random()*h/16)};rs();addEventListener("resize",rs);
+ setInterval(()=>{x.fillStyle="rgba(5,6,15,.12)";x.fillRect(0,0,w,h);x.font="14px monospace";
+  for(let i=0;i<n;i++){x.fillStyle=Math.random()<.04?"#fff":"#00f0ff";x.fillText(ch[Math.random()*ch.length|0],i*16,d[i]*16);if(d[i]*16>h&&Math.random()>.975)d[i]=0;d[i]++}},50)})();
+drawSteps();$("go").onclick=()=>{done=true;run()};
+</script>
+</body>
+</html>
